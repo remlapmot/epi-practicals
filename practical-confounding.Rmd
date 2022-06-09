@@ -10,7 +10,7 @@ output:
       smooth_scroll: false
     toc_depth: 3
     code_download: true
-    code_folding: show
+    # code_folding: show
   pdf_document:
     default
 ---
