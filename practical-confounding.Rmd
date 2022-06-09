@@ -104,6 +104,8 @@ A pathway is closed if
 
 ## Question 1
 
+These questions were inspired by material given by Prof M. A. Hernan.
+
 ### a) 
 
 What is the triangle definition of a confounder -- it has three criteria
