@@ -163,12 +163,12 @@ knitr::include_graphics("./img/dag-confounder.png")
 
 <details>
 <summary></summary>
-- Triangle defintion:
+- Triangle definition:
   1. Yes, $L$ is associated with the exposure, $L$--$X$
   2. Yes, $L$ is associated with the outcome conditional upon the exposure, $L$--$Y$
   3. Yes, $L$ is not on the causal pathway between the exposure and outcome  
-  Overall: Yes. $L$ is a confounder
-- Pearl: Yes. There is confounding since $X$--$L$--$Y$ is an open backdoor pathway
+  Overall: Yes, $L$ is a confounder
+- Pearl: Yes, there is confounding since $X$--$L$--$Y$ is an open backdoor pathway
 </details>
 
 #### DAG B
