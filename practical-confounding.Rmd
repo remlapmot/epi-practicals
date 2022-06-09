@@ -11,8 +11,6 @@ output:
     toc_depth: 3
     code_download: true
     # code_folding: show
-  pdf_document:
-    default
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, results=FALSE}
