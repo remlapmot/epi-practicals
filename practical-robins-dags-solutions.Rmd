@@ -9,3 +9,8 @@ params <- list(include = TRUE)
 
 ```{r child='_practical-robins-dags.Rmd'}
 ```
+
+```{r echo=FALSE}
+details::details(sessioninfo::session_info(),
+                 summary = "<H4>Session info</H4>")
+```
