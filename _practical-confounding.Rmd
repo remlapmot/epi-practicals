@@ -20,8 +20,8 @@ DiagrammeR::grViz("
       digraph mediator {
       graph [rankdir=TB]
       node [shape=plaintext, height=0.3, width=0.3]
-      X 
-      Y 
+      X [label=<<I>X</I>>]
+      Y [label=<<I>Y</I>>]
       { rank = same; X Y }
       X -> Y [minlen=3]
       }
@@ -35,29 +35,30 @@ DiagrammeR::grViz("
       digraph mediator {
       graph [rankdir=TB]
       node [shape=plaintext, height=0.3, width=0.3]
-      X 
+      X [label=<<I>X</I>>]
       M [label='Mediator']
-      Y 
+      Y [label=<<I>Y</I>>]
       { rank = same; X M Y }
-      X -> M [minlen=3]
-      M -> Y [minlen=3]
+      X -> M [minlen=3, label='Indirect']
+      M -> Y [minlen=3, label='pathway']
+      X -> Y [label='Direct pathway']
       }
       ", height = 75)
 ```
 
-* Backdoor pathway (first arrow goes wrong way from start point): $X$--$L$--$Y$
+* Backdoor pathway (first arrow goes wrong way from start point, other arrows can go in either direction): $X \leftarrow L \rightarrow Y$
 
 ```{r, echo=FALSE}
 DiagrammeR::grViz("
       digraph confounder {
       graph [rankdir=TB]
       node [shape=plaintext, height=0.3, width=0.3]
-      X 
-      L 
-      Y 
+      X [label=<<I>X</I>>]
+      L [label=<<I>L</I>>]
+      Y [label=<<I>Y</I>>]
       { rank = same; X Y }
-      L -> X 
-      L -> Y 
+      L -> X
+      L -> Y
       }
       ", height = 200)
 ```
@@ -69,12 +70,12 @@ DiagrammeR::grViz("
       digraph collider {
       graph [rankdir=TB]
       node [shape=plaintext, height=0.3, width=0.3]
-      X 
+      X [label=<<I>X</I>>]
       Z [label='Collider']
-      Y 
+      Y [label=<<I>Y</I>>]
       { rank = same; X Y }
-      X -> Z 
-      Y -> Z 
+      X -> Z
+      Y -> Z
       }
       ", height = 200)
 ```
@@ -98,12 +99,12 @@ DiagrammeR::grViz("
       digraph confounder {
       graph [rankdir=TB]
       node [shape=plaintext, height=0.3, width=0.3]
-      X 
+      X [label=<<I>X</I>>]
       L [label='Confounder']
-      Y 
+      Y [label=<<I>Y</I>>]
       { rank = same; X Y }
-      L -> X 
-      L -> Y 
+      L -> X
+      L -> Y
       X -> Y [minlen=3]
       }
       ", height = 200)
@@ -303,7 +304,7 @@ g <- dagitty('dag {
   B [pos="2,0"]
   C [pos="1,1"]
 }')
-plot(g) 
+plot(g)
 ```
 
 ```{r, include=params$include}
@@ -311,7 +312,7 @@ library(ggdag)
 theme_set(theme_dag())
 
 butterfly_bias(x = "E", y = "D", a = "A", m = "C", b = "B",
-               x_y_associated = TRUE) %>% 
+               x_y_associated = TRUE) %>%
   ggdag(use_labels = "label", text = FALSE)
 ```
 
