@@ -1,6 +1,8 @@
 ```{r setup, include=FALSE, warning=FALSE, results=FALSE}
 knitr::opts_chunk$set(out.width = "50%")
 library(tidyverse)
+library(kableExtra)
+options(knitr.table.format = "html")
 ```
 
 ## Introduction
@@ -30,21 +32,25 @@ table(dat$e[dat$d == 0], dat$es[dat$d == 0])
 * Estimating the marginal odds ratio for the association between $E$ on $D$ (i.e., using $D$ as the outcome/dependent variable and $E$ as the covariate)
 
 ```{r}
-dat %>% 
-  glm(d ~ e, family = binomial, data = .) %>% 
-  {cbind(coef(.), confint.default(.))} %>% 
-  exp() %>% 
-  round(., digits = 2)
+dat %>%
+  glm(d ~ e, family = binomial, data = .) %>%
+  {cbind(coef(.), confint.default(.))} %>%
+  exp() %>%
+  round(., digits = 2) %>%
+  kbl() %>%
+  kable_styling(full_width = FALSE)
 ```
 
 * Estimating the conditional odds ratio for the association between $E$ and $D$ adjusting for/conditioning on $E^*$
 
 ```{r}
-dat %>% 
-  glm(d ~ e + es, family = binomial, data = .) %>% 
-  {cbind(coef(.), confint.default(.))} %>% 
-  exp() %>% 
-  round(., digits = 2)
+dat %>%
+  glm(d ~ e + es, family = binomial, data = .) %>%
+  {cbind(coef(.), confint.default(.))} %>%
+  exp() %>%
+  round(., digits = 2) %>%
+  kbl() %>%
+  kable_styling(full_width = FALSE)
 ```
 
 <!-- * Showing that we get equivalent ORs in both `es` subgroups -->
@@ -61,11 +67,13 @@ dat %>%
 * Estimating the marginal odds ratio for the association between $E^*$ and $D$
 
 ```{r}
-dat %>% 
-  glm(d ~ es, family = binomial, data = .) %>% 
-  {cbind(coef(.), confint.default(.))} %>% 
-  exp() %>% 
-  round(., digits = 2)
+dat %>%
+  glm(d ~ es, family = binomial, data = .) %>%
+  {cbind(coef(.), confint.default(.))} %>%
+  exp() %>%
+  round(., digits = 2) %>%
+  kbl() %>%
+  kable_styling(full_width = FALSE)
 ```
 
 ## Question
