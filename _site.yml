@@ -1,0 +1,28 @@
+name: "epi-practicals"
+output_dir: docs
+navbar:
+  title: "Menu"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Practicals"
+      menu:
+      - text: "Practical 1"
+        menu:
+        - text: "DAGs and confounding"
+          href: practical-confounding.html
+        - text: "Refresher"
+          href: practical-confounding.html#refresher
+        - text: "Question 1"
+          href: practical-confounding.html#question-1
+        - text: "Question 2"
+          href: practical-confounding.html#question-2
+      - text: "Practical 2"
+        menu:
+        - text: "DAGs and conditioning scenarios"
+          href: practical-robins-dags.html
+        - text: Introduction
+          href: practical-robins-dags.html#introduction
+        - text: Question
+          href: practical-robins-dags.html#question
+new_session: true

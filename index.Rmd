@@ -1,0 +1,6 @@
+---
+title: ""
+pagetitle: epi-practicals
+---
+
+Some practicals for Epidemiology.

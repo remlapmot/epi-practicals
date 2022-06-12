@@ -1,10 +1,10 @@
 ---
 title: "Causal diagrams and conditioning scenarios"
-pagetitle: "DAGs and conditioning scenarios"
+pagetitle: "DAGs and confounding with solutions"
 ---
 
 ```{r include=FALSE}
-params <- list(include = FALSE)
+params <- list(include = TRUE)
 ```
 
 ```{r child='_practical-robins-dags.Rmd'}
