@@ -1,7 +1,7 @@
 name: "epi-practicals"
 output_dir: docs
 navbar:
-  title: "Menu"
+  title: ""
   left:
     - text: "Home"
       href: index.html
