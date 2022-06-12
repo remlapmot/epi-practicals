@@ -7,8 +7,6 @@ require(ggdag)
 require(DiagrammeR)
 ```
 
-<!-- `r Hmisc::hidingTOC(levels = 3)` -->
-
 ## Refresher
 
 Notation: exposure $X$, outcome $Y$
