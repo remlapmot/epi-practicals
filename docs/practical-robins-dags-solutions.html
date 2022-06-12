@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>DAGs and confounding with solutions</title>
+
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-submenu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Practical 1</a>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <a href="practical-confounding.html">DAGs and confounding</a>
+        </li>
+        <li>
+          <a href="practical-confounding.html#refresher">Refresher</a>
+        </li>
+        <li>
+          <a href="practical-confounding.html#question-1">Question 1</a>
+        </li>
+        <li>
+          <a href="practical-confounding.html#question-2">Question 2</a>
+        </li>
+      </ul>
+    </li>
+    <li class="dropdown-submenu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Practical 2</a>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <a href="practical-robins-dags.html">DAGs and conditioning scenarios</a>
+        </li>
+        <li>
+          <a href="practical-robins-dags.html#introduction">Introduction</a>
+        </li>
+        <li>
+          <a href="practical-robins-dags.html#question">Question</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Causal diagrams and conditioning
+scenarios</h1>
+
+</div>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this practical you need to draw a DAG for each of 3 scenarios and
+then decide what model to fit.</p>
+<p>We will use the same data for each scenario. The data is given in the
+table below.</p>
+<p><img src="img/practical-2b-robins-dags-data-table.png" width="50%" /></p>
+<p>First, we perform some estimation so that you know the associations
+between the 3 variables <span class="math inline">\(E\)</span>, <span
+class="math inline">\(E^*\)</span>, and <span
+class="math inline">\(D\)</span>.</p>
+<ul>
+<li>Estimating the marginal odds ratio for the association between <span
+class="math inline">\(E\)</span> on <span
+class="math inline">\(D\)</span> (i.e., using <span
+class="math inline">\(D\)</span> as the outcome/dependent variable and
+<span class="math inline">\(E\)</span> as the covariate)</li>
+</ul>
+<pre class="r"><code>dat %&gt;%
+  glm(d ~ e, family = binomial, data = .) %&gt;%
+  {cbind(coef(.), confint.default(.))} %&gt;%
+  exp() %&gt;%
+  round(., digits = 2) %&gt;%
+  kbl() %&gt;%
+  kable_styling(full_width = FALSE)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+</th>
+<th style="text-align:right;">
+2.5 %
+</th>
+<th style="text-align:right;">
+97.5 %
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+0.28
+</td>
+<td style="text-align:right;">
+0.24
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+e
+</td>
+<td style="text-align:right;">
+1.73
+</td>
+<td style="text-align:right;">
+1.42
+</td>
+<td style="text-align:right;">
+2.09
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Estimating the conditional odds ratio for the association between
+<span class="math inline">\(E\)</span> and <span
+class="math inline">\(D\)</span> adjusting for/conditioning on <span
+class="math inline">\(E^*\)</span></li>
+</ul>
+<pre class="r"><code>dat %&gt;%
+  glm(d ~ e + es, family = binomial, data = .) %&gt;%
+  {cbind(coef(.), confint.default(.))} %&gt;%
+  exp() %&gt;%
+  round(., digits = 2) %&gt;%
+  kbl() %&gt;%
+  kable_styling(full_width = FALSE)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+</th>
+<th style="text-align:right;">
+2.5 %
+</th>
+<th style="text-align:right;">
+97.5 %
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+0.33
+</td>
+<td style="text-align:right;">
+0.29
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+e
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:right;">
+2.40
+</td>
+<td style="text-align:right;">
+3.76
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+es
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+0.24
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+</tbody>
+</table>
+<!-- * Showing that we get equivalent ORs in both `es` subgroups -->
+<!-- ```{r} -->
+<!-- dat %>% -->
+<!--   group_by(es) %>% -->
+<!--   group_modify(~ broom::tidy(glm(d ~ e, family = binomial, data = .x),  -->
+<!--                              conf.int = TRUE, exponentiate = TRUE)) %>% -->
+<!--   select(es, term, estimate, conf.low, conf.high) %>% -->
+<!--   mutate_at(vars(c("estimate", "conf.low", "conf.high")), round, 2) -->
+<!-- ``` -->
+<ul>
+<li>Estimating the marginal odds ratio for the association between <span
+class="math inline">\(E^*\)</span> and <span
+class="math inline">\(D\)</span></li>
+</ul>
+<pre class="r"><code>dat %&gt;%
+  glm(d ~ es, family = binomial, data = .) %&gt;%
+  {cbind(coef(.), confint.default(.))} %&gt;%
+  exp() %&gt;%
+  round(., digits = 2) %&gt;%
+  kbl() %&gt;%
+  kable_styling(full_width = FALSE)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+</th>
+<th style="text-align:right;">
+2.5 %
+</th>
+<th style="text-align:right;">
+97.5 %
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+0.5
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+<td style="text-align:right;">
+0.56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+es
+</td>
+<td style="text-align:right;">
+0.5
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+<td style="text-align:right;">
+0.61
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="question" class="section level2">
+<h2>Question</h2>
+<p>You are given 3 scenarios from which the data could have been
+obtained. For each scenario we wish to estimate the effect of <span
+class="math inline">\(E\)</span> on <span
+class="math inline">\(D\)</span>.</p>
+<ul>
+<li>Draw a DAG for each scenario</li>
+<li>Once you have drawn your DAG check that it conforms to the
+conditional independencies which were estimated above</li>
+<li>Use your DAG to write down model would you fit to estimate the
+effect of <span class="math inline">\(E\)</span> on <span
+class="math inline">\(D\)</span> in each scenario</li>
+</ul>
+<div id="scenario-1" class="section level3">
+<h3>Scenario 1</h3>
+<ul>
+<li>The data come from a case-control study</li>
+<li>The aetiological question of interest is whether exposure to a
+particular nonsteroidal anti-inflammatory drug during the first
+trimester of pregnancy causes a congenital defect (<span
+class="math inline">\(D\)</span>) arising in the second trimester</li>
+<li><span class="math inline">\(D=1\)</span> for cases, <span
+class="math inline">\(D=0\)</span> for controls without the defect</li>
+<li>The sampling fraction for controls is unknown</li>
+<li><span class="math inline">\(E^*\)</span> is use of the drug of
+interest during the first trimester, as self-reported by the mother 1
+month postpartum</li>
+<li><span class="math inline">\(E\)</span> is use of the drug of
+interest as recorded in comprehensive, accurate medical records of 1st
+trimester medications</li>
+<li>You can ignore including any other possible confounders or other
+drug exposures</li>
+</ul>
+<details>
+<summary>
+</summary>
+<p><img src="img/practical-2b-robins-dags-dag-6.png" width="50%" /></p>
+<ul>
+<li>The model to fit is the marginal model of <span
+class="math inline">\(D\)</span> regressed upon <span
+class="math inline">\(E\)</span>. We do not need to adjust for <span
+class="math inline">\(E^*\)</span> which would be a collider in this
+model</li>
+<li>The arrow from <span class="math inline">\(E \rightarrow D\)</span>
+must go in this directions because the medical records were created in
+the first trimester, before the development of the defect in the second
+trimester</li>
+<li>Taking a medicine will cause a woman to report taking it hence <span
+class="math inline">\(E \rightarrow E^*\)</span></li>
+<li>Since woman’s self-report <span class="math inline">\(E^*\)</span>
+is obtained after birth then the arrow goes from <span
+class="math inline">\(D\)</span> to <span
+class="math inline">\(E^*\)</span>. We know this marginal association
+exists in the data.</li>
+</ul>
+</details>
+</div>
+<div id="scenario-2" class="section level3">
+<h3>Scenario 2</h3>
+<ul>
+<li>The data come from a prospective cohort study</li>
+<li><span class="math inline">\(D\)</span> is all-cause mortality in a
+cohort of healthy male miners, all aged 25 years, all of whom worked
+underground in a variety of different mine shafts for 6 months in
+1967</li>
+<li>40 year follow-up is complete. The aetiologic question is whether
+pulmonary exposure to doses of radon above a certain level causes
+increased mortality</li>
+<li>For each miner, the air level of radon in his mine was measured
+(<span class="math inline">\(E^*\)</span>)</li>
+<li>A subject’s actual exposure depends on the level of radon in the
+mine and the physical demands of the job and this was measured by lung
+dosimetry (<span class="math inline">\(E\)</span>: 0 = below threshold
+of interest, 1 = above)</li>
+<li>It is known that 6 months of physical exertion at age 25 years has
+no independent effect on subsequent mortality</li>
+</ul>
+<details>
+<summary>
+</summary>
+<p><img src="img/practical-2b-robins-dags-dag-7.png" width="50%" /></p>
+<ul>
+<li>The model to fit is <span class="math inline">\(D\)</span> regressed
+upon <span class="math inline">\(E\)</span> and <span
+class="math inline">\(E^*\)</span></li>
+<li>Adjustment for <span class="math inline">\(E^*\)</span> is required
+to block the backdoor pathway <span class="math inline">\(E \leftarrow
+E^* \leftarrow\)</span> Mine <span
+class="math inline">\(\rightarrow\)</span> Silica <span
+class="math inline">\(\rightarrow D\)</span></li>
+</ul>
+</details>
+</div>
+<div id="scenario-3" class="section level3">
+<h3>Scenario 3</h3>
+<ul>
+<li>The data come from a randomized controlled trial</li>
+<li><span class="math inline">\(D\)</span> is death over a 15 year
+period</li>
+<li>Study subjects were randomly assigned to an educational intervention
+to encourage them to eat a low fat diet (<span
+class="math inline">\(E^*=1\)</span> for intervention, <span
+class="math inline">\(E^*=0\)</span> for control)</li>
+<li>Investigators subsequently measured diet accurately in all trial
+participants (<span class="math inline">\(E=1\)</span> for low fat diet,
+<span class="math inline">\(E=0\)</span> for non-low fat diet)</li>
+<li>Assume the intervention has no effect on <span
+class="math inline">\(D\)</span> other than through its effect on actual
+fat consumption <span class="math inline">\(E\)</span></li>
+</ul>
+<details>
+<summary>
+</summary>
+<p><img src="img/practical-2b-robins-dags-dag-8.png" width="50%" /></p>
+<ul>
+<li>Given this DAG the marginal association between <span
+class="math inline">\(E^*\)</span> and <span
+class="math inline">\(D\)</span> gives us the best estimate of the true
+assocation between <span class="math inline">\(E\)</span> and <span
+class="math inline">\(D\)</span></li>
+<li>This is because <span class="math inline">\(E^*\)</span> is
+independent of the possible confounding factors between the non-randomly
+allocated <span class="math inline">\(E\)</span> and <span
+class="math inline">\(D\)</span></li>
+<li>This is the DAG for an instrumental variable analysis</li>
+<li>Use of randomized treatment status to correct for non-compliance has
+used as an instrumental variable to estimate treatment effects in the
+analysis of clinical trials</li>
+</ul>
+</details>
+<details>
+<summary>
+</summary>
+These questions and answers are taken from: Robins JM. Data, Design, and
+Background Knowledge in Etiologic Inference, Epidemiology, 2001, 11,
+313–320. <a href="https://doi.org/10.1097/00001648-200105000-00011"
+class="uri">https://doi.org/10.1097/00001648-200105000-00011</a>
+</details>
+<details closed>
+<summary>
+<span title='Click to Expand'>
+<H4>
+Session info
+</H4>
+</span>
+</summary>
+<pre class="r"><code>
+─ Session info ────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.2.0 (2022-04-22)
+ os       macOS Monterey 12.4
+ system   aarch64, darwin20
+ ui       X11
+ language (EN)
+ collate  en_GB.UTF-8
+ ctype    en_GB.UTF-8
+ tz       Europe/London
+ date     2022-06-12
+ pandoc   2.18 @ /opt/homebrew/bin/ (via rmarkdown)
+
+─ Packages ────────────────────────────────────────────────────────────────────────────────
+ package     * version date (UTC) lib source
+ assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.2.0)
+ backports     1.4.1   2021-12-13 [1] CRAN (R 4.2.0)
+ broom         0.8.0   2022-04-13 [1] CRAN (R 4.2.0)
+ bslib         0.3.1   2021-10-06 [1] CRAN (R 4.2.0)
+ cellranger    1.1.0   2016-07-27 [1] CRAN (R 4.2.0)
+ cli           3.3.0   2022-04-25 [1] CRAN (R 4.2.0)
+ clipr         0.8.0   2022-02-22 [1] CRAN (R 4.2.0)
+ colorspace    2.0-3   2022-02-21 [1] CRAN (R 4.2.0)
+ crayon        1.5.1   2022-03-26 [1] CRAN (R 4.2.0)
+ DBI           1.1.2   2021-12-20 [1] CRAN (R 4.2.0)
+ dbplyr        2.2.0   2022-06-05 [1] CRAN (R 4.2.0)
+ desc          1.4.1   2022-03-06 [1] CRAN (R 4.2.0)
+ details       0.3.0   2022-03-27 [1] CRAN (R 4.2.0)
+ digest        0.6.29  2021-12-01 [1] CRAN (R 4.2.0)
+ dplyr       * 1.0.9   2022-04-28 [1] CRAN (R 4.2.0)
+ ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.2.0)
+ evaluate      0.15    2022-02-18 [1] CRAN (R 4.2.0)
+ fansi         1.0.3   2022-03-24 [1] CRAN (R 4.2.0)
+ fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.2.0)
+ forcats     * 0.5.1   2021-01-27 [1] CRAN (R 4.2.0)
+ foreign     * 0.8-82  2022-01-16 [1] CRAN (R 4.2.0)
+ fs            1.5.2   2021-12-08 [1] CRAN (R 4.2.0)
+ generics      0.1.2   2022-01-31 [1] CRAN (R 4.2.0)
+ ggplot2     * 3.3.6   2022-05-03 [1] CRAN (R 4.2.0)
+ glue          1.6.2   2022-02-24 [1] CRAN (R 4.2.0)
+ gtable        0.3.0   2019-03-25 [1] CRAN (R 4.2.0)
+ haven         2.5.0   2022-04-15 [1] CRAN (R 4.2.0)
+ highr         0.9     2021-04-16 [1] CRAN (R 4.2.0)
+ hms           1.1.1   2021-09-26 [1] CRAN (R 4.2.0)
+ htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.2.0)
+ httr          1.4.3   2022-05-04 [1] CRAN (R 4.2.0)
+ jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.2.0)
+ jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.2.0)
+ kableExtra  * 1.3.4   2021-02-20 [1] CRAN (R 4.2.0)
+ knitr         1.39    2022-04-26 [1] CRAN (R 4.2.0)
+ lifecycle     1.0.1   2021-09-24 [1] CRAN (R 4.2.0)
+ lubridate     1.8.0   2021-10-07 [1] CRAN (R 4.2.0)
+ magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.2.0)
+ modelr        0.1.8   2020-05-19 [1] CRAN (R 4.2.0)
+ munsell       0.5.0   2018-06-12 [1] CRAN (R 4.2.0)
+ pillar        1.7.0   2022-02-01 [1] CRAN (R 4.2.0)
+ pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.2.0)
+ png           0.1-7   2013-12-03 [1] CRAN (R 4.2.0)
+ purrr       * 0.3.4   2020-04-17 [1] CRAN (R 4.2.0)
+ R6            2.5.1   2021-08-19 [1] CRAN (R 4.2.0)
+ readr       * 2.1.2   2022-01-30 [1] CRAN (R 4.2.0)
+ readxl        1.4.0   2022-03-28 [1] CRAN (R 4.2.0)
+ reprex        2.0.1   2021-08-05 [1] CRAN (R 4.2.0)
+ rlang         1.0.2   2022-03-04 [1] CRAN (R 4.2.0)
+ rmarkdown     2.14    2022-04-25 [1] CRAN (R 4.2.0)
+ rprojroot     2.0.3   2022-04-02 [1] CRAN (R 4.2.0)
+ rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.2.0)
+ rvest         1.0.2   2021-10-16 [1] CRAN (R 4.2.0)
+ sass          0.4.1   2022-03-23 [1] CRAN (R 4.2.0)
+ scales        1.2.0   2022-04-13 [1] CRAN (R 4.2.0)
+ sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.2.0)
+ stringi       1.7.6   2021-11-29 [1] CRAN (R 4.2.0)
+ stringr     * 1.4.0   2019-02-10 [1] CRAN (R 4.2.0)
+ svglite       2.1.0   2022-02-03 [1] CRAN (R 4.2.0)
+ systemfonts   1.0.4   2022-02-11 [1] CRAN (R 4.2.0)
+ tibble      * 3.1.7   2022-05-03 [1] CRAN (R 4.2.0)
+ tidyr       * 1.2.0   2022-02-01 [1] CRAN (R 4.2.0)
+ tidyselect    1.1.2   2022-02-21 [1] CRAN (R 4.2.0)
+ tidyverse   * 1.3.1   2021-04-15 [1] CRAN (R 4.2.0)
+ tzdb          0.3.0   2022-03-28 [1] CRAN (R 4.2.0)
+ utf8          1.2.2   2021-07-24 [1] CRAN (R 4.2.0)
+ vctrs         0.4.1   2022-04-13 [1] CRAN (R 4.2.0)
+ viridisLite   0.4.0   2021-04-13 [1] CRAN (R 4.2.0)
+ webshot       0.5.3   2022-04-14 [1] CRAN (R 4.2.0)
+ withr         2.5.0   2022-03-03 [1] CRAN (R 4.2.0)
+ xfun          0.31    2022-05-10 [1] CRAN (R 4.2.0)
+ xml2          1.3.3   2021-11-30 [1] CRAN (R 4.2.0)
+ yaml          2.3.5   2022-02-21 [1] CRAN (R 4.2.0)
+
+ [1] /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library
+
+───────────────────────────────────────────────────────────────────────────────────────────
+</code></pre>
+</details>
+<p><br></p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

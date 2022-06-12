@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>DAGs and confounding with solutions</title>
+
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/viz-1.8.2/viz.js"></script>
+<link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="site_libs/grViz-binding-1.0.9/grViz.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Practicals
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-submenu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Practical 1</a>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <a href="practical-confounding.html">DAGs and confounding</a>
+        </li>
+        <li>
+          <a href="practical-confounding.html#refresher">Refresher</a>
+        </li>
+        <li>
+          <a href="practical-confounding.html#question-1">Question 1</a>
+        </li>
+        <li>
+          <a href="practical-confounding.html#question-2">Question 2</a>
+        </li>
+      </ul>
+    </li>
+    <li class="dropdown-submenu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Practical 2</a>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <a href="practical-robins-dags.html">DAGs and conditioning scenarios</a>
+        </li>
+        <li>
+          <a href="practical-robins-dags.html#introduction">Introduction</a>
+        </li>
+        <li>
+          <a href="practical-robins-dags.html#question">Question</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Directed acyclic graphs and
+confounding</h1>
+
+</div>
+
+
+<div id="refresher" class="section level2">
+<h2>Refresher</h2>
+<p>Notation: exposure <span class="math inline">\(X\)</span>, outcome
+<span class="math inline">\(Y\)</span></p>
+<ul>
+<li>Pathway</li>
+</ul>
+<div id="htmlwidget-9f2e10d0480fd0f1a8ae" style="width:50%;height:75px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9f2e10d0480fd0f1a8ae">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<ul>
+<li>Mediator:</li>
+</ul>
+<div id="htmlwidget-68453d48708ed01ade80" style="width:50%;height:75px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-68453d48708ed01ade80">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      M [label=\"Mediator\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X M Y }\n      X -> M [minlen=3, label=\"Indirect\"]\n      M -> Y [minlen=3, label=\"pathway\"]\n      X -> Y [label=\"Direct pathway\"]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<ul>
+<li>Backdoor pathway (first arrow goes wrong way from start point, other
+arrows can go in either direction): <span class="math inline">\(X
+\leftarrow L \rightarrow Y\)</span></li>
+</ul>
+<div id="htmlwidget-59c51a3a330ea935e9de" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-59c51a3a330ea935e9de">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=<<I>L<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<ul>
+<li>Collider</li>
+</ul>
+<div id="htmlwidget-682ead238a5637c3746d" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-682ead238a5637c3746d">{"x":{"diagram":"\n      digraph collider {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Z [label=\"Collider\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Z\n      Y -> Z\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p>A pathway is closed if</p>
+<ul>
+<li>We adjust for a variable that’s not a collider on the pathway</li>
+<li>There’s a collider on the pathway</li>
+</ul>
+</div>
+<div id="question-1" class="section level2">
+<h2>Question 1</h2>
+<p>These questions were inspired by material given by Prof M. A.
+Hernán.</p>
+<div id="a" class="section level3">
+<h3>a)</h3>
+<p>What is the triangle definition of a confounder? Hint: it has three
+criteria.</p>
+<div id="htmlwidget-c57a19767500e523d3b7" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c57a19767500e523d3b7">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=\"Confounder\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p>A confounder is</p>
+<ol style="list-style-type: decimal">
+<li></li>
+<li></li>
+<li></li>
+</ol>
+<details>
+<summary>
+</summary>
+<ol style="list-style-type: decimal">
+<li>Associated with the exposure, Confounder <span
+class="math inline">\(\rightarrow X\)</span></li>
+<li>Associated with the outcome conditional on the exposure, Confounder
+<span class="math inline">\(\rightarrow Y\)</span> (i.e., a pathway not
+through <span class="math inline">\(X\)</span>, hence which could be
+blocked by adjusting for <span class="math inline">\(X\)</span>)</li>
+<li>Not on the causal pathway between the exposure and outcome</li>
+</ol>
+</details>
+</div>
+<div id="b" class="section level3">
+<h3>b)</h3>
+<p>What is Pearl’s definition of confounding?</p>
+<details>
+<summary>
+</summary>
+There is confounding of the exposure and outcome relationship when there
+is an open backdoor pathway between them (and therefore, a confounder is
+any variable on an open backdoor pathway between an exposure and
+outcome.)
+</details>
+</div>
+<div id="c" class="section level3">
+<h3>c)</h3>
+<p>For each of the following DAGs assess whether</p>
+<ul>
+<li><span class="math inline">\(L\)</span> is confounder under the
+triangle definition of a confounder (assess each of the 3 criteria)</li>
+<li>there is confounding of the <span
+class="math inline">\(X\)</span>–<span class="math inline">\(Y\)</span>
+relationship under Pearl’s definition of confounding</li>
+</ul>
+<div id="dag-a" class="section level4">
+<h4>DAG A</h4>
+<p><img src="img/dag-confounder.png" width="50%" /></p>
+<details>
+<summary>
+</summary>
+<ul>
+<li>Triangle definition:
+<ol style="list-style-type: decimal">
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+exposure, <span class="math inline">\(L \rightarrow X\)</span></li>
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+outcome conditional upon the exposure, <span class="math inline">\(L
+\rightarrow Y\)</span> (i.e., <span class="math inline">\(L \rightarrow
+X \rightarrow Y\)</span> could be blocked at X but <span
+class="math inline">\(L \rightarrow Y\)</span> would still be open)</li>
+<li>Yes, <span class="math inline">\(L\)</span> is not on the causal
+pathway between the exposure and outcome<br />
+Overall: Yes, <span class="math inline">\(L\)</span> is a
+confounder</li>
+</ol></li>
+<li>Pearl: Yes, there is confounding since <span class="math inline">\(X
+\leftarrow L \rightarrow Y\)</span> is an open backdoor pathway</li>
+</ul>
+</details>
+</div>
+<div id="dag-b" class="section level4">
+<h4>DAG B</h4>
+<p><img src="img/dag-backdoor-path-2-vars.png" width="50%" /></p>
+<details>
+<summary>
+</summary>
+<ul>
+<li>Triangle definition:
+<ol style="list-style-type: decimal">
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+exposure, <span class="math inline">\(L \rightarrow X\)</span></li>
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+outcome conditional upon the exposure, <span class="math inline">\(L
+\leftarrow U \rightarrow Y\)</span></li>
+<li>Yes, <span class="math inline">\(L\)</span> is not on the causal
+pathway between the exposure and outcome<br />
+Overall: Yes, <span class="math inline">\(L\)</span> is a
+confounder<br />
+</li>
+</ol></li>
+<li>Pearl: Yes there is confounding of <span
+class="math inline">\(X\)</span>–<span class="math inline">\(Y\)</span>
+relationship because <span class="math inline">\(X \leftarrow L
+\leftarrow U \rightarrow Y\)</span> is an open backdoor pathway</li>
+</ul>
+</details>
+</div>
+<div id="dag-c" class="section level4">
+<h4>DAG C</h4>
+<p><img src="img/dag-backdoor-path-with-confounder.png" width="50%" /></p>
+<details>
+<summary>
+</summary>
+<ul>
+<li>Triangle definition:
+<ol style="list-style-type: decimal">
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+exposure, <span class="math inline">\(L \leftarrow U \rightarrow
+X\)</span></li>
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+outcome conditional upon the exposure, <span class="math inline">\(L
+\rightarrow Y\)</span></li>
+<li>Yes, <span class="math inline">\(L\)</span> is not on the causal
+pathway between the exposure and outcome<br />
+Overall: Yes, <span class="math inline">\(L\)</span> is a
+confounder</li>
+</ol></li>
+<li>Pearl: Yes there is confounding of the <span
+class="math inline">\(X\)</span>–<span class="math inline">\(Y\)</span>
+relationship because <span class="math inline">\(X \leftarrow U
+\rightarrow L \rightarrow Y\)</span> is an open backdoor pathway.</li>
+</ul>
+</details>
+</div>
+<div id="dag-d" class="section level4">
+<h4>DAG D</h4>
+<p><img src="img/dag-backdoor-path-u1-u2.png" width="50%" /></p>
+<details>
+<summary>
+</summary>
+<ul>
+<li>Triangle definition:
+<ol style="list-style-type: decimal">
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+exposure, <span class="math inline">\(L \leftarrow U_2 \rightarrow
+X\)</span> is an open path</li>
+<li>Yes, <span class="math inline">\(L\)</span> is associated with the
+outcome conditional upon the exposure, <span class="math inline">\(L
+\leftarrow U_1 \rightarrow Y\)</span> is an open path</li>
+<li>Yes, <span class="math inline">\(L\)</span> is not on the causal
+pathway between <span class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span><br />
+Overall: Yes, <span class="math inline">\(L\)</span> is a
+confounder</li>
+</ol></li>
+<li>Pearl: <strong>No</strong>! There is no confounding of the <span
+class="math inline">\(X\)</span>–<span class="math inline">\(Y\)</span>
+relationship because <span class="math inline">\(X \leftarrow U_2
+\rightarrow L \leftarrow U_1 \rightarrow Y\)</span> is a closed pathway.
+Under <em>d</em>-separation (directional-separation) rules <span
+class="math inline">\(L\)</span> is a collider of <span
+class="math inline">\(U_1\)</span> and <span
+class="math inline">\(U_2\)</span>. Hence, without adjustment for the
+<span class="math inline">\(L\)</span> the path is closed. Including
+<span class="math inline">\(L\)</span> in a model will open the path
+between <span class="math inline">\(U_1\)</span> and <span
+class="math inline">\(U_2\)</span> which would bias the association
+between <span class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span>, since <span class="math inline">\(X
+\leftarrow U_2 \leftrightarrow U_1 \rightarrow Y\)</span> would be an
+open backdoor path. Hence, under the <em>d</em>-separation rules we
+don’t want to adjust for <span class="math inline">\(L\)</span>, even
+though we consider it to be a confounder under the triangle
+definition.</li>
+</ul>
+<strong><em>Takeaway message: the triangle definition of a confounder
+breaks down when there is a collider on a backdoor pathway</em></strong>
+</details>
+</div>
+</div>
+</div>
+<div id="question-2" class="section level2">
+<h2>Question 2</h2>
+<p>The following DAG describes a model between an exposure (<span
+class="math inline">\(E\)</span>), a disease outcome (<span
+class="math inline">\(D\)</span>), and three other variables (<span
+class="math inline">\(A\)</span>, <span
+class="math inline">\(B\)</span>, and <span
+class="math inline">\(C\)</span>).</p>
+<p><img src="img/dag-m-bias.png" width="50%" /></p>
+<div id="a-1" class="section level3">
+<h3>a)</h3>
+<p>List all the (both open and closed) backdoor pathways between <span
+class="math inline">\(E\)</span> and <span
+class="math inline">\(D\)</span>.</p>
+<details>
+<summary>
+</summary>
+<ul>
+<li><span class="math inline">\(E \leftarrow C \rightarrow
+D\)</span></li>
+<li><span class="math inline">\(E \leftarrow C \leftarrow B \rightarrow
+D\)</span></li>
+<li><span class="math inline">\(E \leftarrow A \rightarrow C \rightarrow
+D\)</span></li>
+<li><span class="math inline">\(E \leftarrow A \rightarrow C \leftarrow
+B \rightarrow D\)</span></li>
+</ul>
+</details>
+</div>
+<div id="b-1" class="section level3">
+<h3>b)</h3>
+<p>With respect to <span class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span> how would you describe <span
+class="math inline">\(C\)</span>?</p>
+<details>
+<summary>
+</summary>
+<span class="math inline">\(C\)</span> is a collider with respect to
+<span class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span>.
+</details>
+</div>
+<div id="c-1" class="section level3">
+<h3>c)</h3>
+<p>If we fitted a regression model using <span
+class="math inline">\(B\)</span> as the outcome regressed on covariates
+<span class="math inline">\(A\)</span> and <span
+class="math inline">\(C\)</span>, what could be the problem?</p>
+<details>
+<summary>
+</summary>
+Since <span class="math inline">\(C\)</span> is a collider of <span
+class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span>, fitting such a model would be biased
+due to adjustment for a collider. It would induce an assocation between
+<span class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span>, <span class="math inline">\(A
+\leftrightarrow B\)</span>.
+</details>
+</div>
+<div id="d" class="section level3">
+<h3>d)</h3>
+<p>Suppose we want to estimate the effect of <span
+class="math inline">\(E\)</span> on <span
+class="math inline">\(D\)</span>, is there one best model to estimate
+this association? Write down the best model/s</p>
+<details>
+<summary>
+</summary>
+<p>There are several models which block all potential backdoor pathways.
+These are:</p>
+<ul>
+<li>Adjusting for <span class="math inline">\(C\)</span> and <span
+class="math inline">\(A\)</span></li>
+<li>Adjusting for <span class="math inline">\(C\)</span> and <span
+class="math inline">\(B\)</span></li>
+<li>Adjusting for <span class="math inline">\(C\)</span> and <span
+class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span></li>
+</ul>
+<p>Given that we must include in <span class="math inline">\(C\)</span>
+we must then include one or both of <span
+class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span> to block the <span
+class="math inline">\(A\)</span>–<span class="math inline">\(B\)</span>
+pathway which is opened by adjusting for <span
+class="math inline">\(C\)</span>.</p>
+There’s an argument to be made for adjusting for no variables as the
+bias induced by adjusting for <span class="math inline">\(C\)</span>
+could be worse than the <span class="math inline">\(E \leftarrow C
+\rightarrow D\)</span> pathway.
+</details>
+</div>
+<div id="e" class="section level3">
+<h3>e)</h3>
+<p>Verify your answers using the
+<strong>dagitty</strong>/<strong>ggdag</strong> packages in R (or the
+dagitty web app <a href="http://dagitty.net/dags.html">here</a>).</p>
+<details>
+<summary>
+</summary>
+<pre class="r"><code>library(dagitty)
+library(ggdag)
+theme_set(theme_dag())
+
+g &lt;- dagitty(&#39;dag {
+  E &lt;- A -&gt; C &lt;- B -&gt; D
+  E -&gt; D
+  C -&gt; E
+  C -&gt; D
+  E [exposure, pos=&quot;0,2&quot;]
+  D [outcome, pos=&quot;2,2&quot;]
+  A [pos=&quot;0,0&quot;]
+  B [pos=&quot;2,0&quot;]
+  C [pos=&quot;1,1&quot;]
+}&#39;)
+plot(g)</code></pre>
+<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-25-1.png" width="50%" /></p>
+<pre class="r"><code>library(ggdag)
+theme_set(theme_dag())
+
+butterfly_bias(x = &quot;E&quot;, y = &quot;D&quot;, a = &quot;A&quot;, m = &quot;C&quot;, b = &quot;B&quot;,
+               x_y_associated = TRUE) %&gt;%
+  ggdag(use_labels = &quot;label&quot;, text = FALSE)</code></pre>
+<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-26-1.png" width="50%" /></p>
+<pre class="r"><code>paths(g, &quot;E&quot;, &quot;D&quot;)</code></pre>
+<pre><code>## $paths
+## [1] &quot;E -&gt; D&quot;                &quot;E &lt;- A -&gt; C -&gt; D&quot;      &quot;E &lt;- A -&gt; C &lt;- B -&gt; D&quot;
+## [4] &quot;E &lt;- C -&gt; D&quot;           &quot;E &lt;- C &lt;- B -&gt; D&quot;     
+## 
+## $open
+## [1]  TRUE  TRUE FALSE  TRUE  TRUE</code></pre>
+<p>Which paths remain open when conditioning on <span
+class="math inline">\(C\)</span>.</p>
+<pre class="r"><code>paths(g, &quot;E&quot;, &quot;D&quot;, c(&quot;C&quot;))</code></pre>
+<pre><code>## $paths
+## [1] &quot;E -&gt; D&quot;                &quot;E &lt;- A -&gt; C -&gt; D&quot;      &quot;E &lt;- A -&gt; C &lt;- B -&gt; D&quot;
+## [4] &quot;E &lt;- C -&gt; D&quot;           &quot;E &lt;- C &lt;- B -&gt; D&quot;     
+## 
+## $open
+## [1]  TRUE FALSE  TRUE FALSE FALSE</code></pre>
+<pre class="r"><code>impliedConditionalIndependencies(g)</code></pre>
+<pre><code>## A _||_ B
+## A _||_ D | B, C, E
+## B _||_ E | A, C</code></pre>
+<p>What do we need to adjust for to estimate the effect of <span
+class="math inline">\(E\)</span> on <span
+class="math inline">\(D\)</span>?</p>
+<pre class="r"><code>adjustmentSets(g)</code></pre>
+<pre><code>## { B, C }
+## { A, C }</code></pre>
+<strong><em>Important: dagitty misses the third solution:</em></strong>
+<code>{ A, B, C }</code>
+</details>
+</div>
+</div>
+<div id="applied-example" class="section level2">
+<h2>Applied example</h2>
+<details>
+<summary>
+</summary>
+<p><img src="img/lederer-aats-2019-fig-1d-mbias.png" width="50%" /></p>
+<ul>
+<li>The orange arrows represent a closed back-door path: chronic
+beta-blocker therapy <span class="math inline">\(\leftarrow\)</span>
+heart failure <span class="math inline">\(\rightarrow\)</span> Crackles
+<span class="math inline">\(\leftarrow\)</span> Pneumonia <span
+class="math inline">\(\rightarrow\)</span> acute respiratory distress
+syndrome (ARDS).</li>
+<li>Crackles stands for auscultatory crackles: <a
+href="https://en.wikipedia.org/wiki/Crackles"
+class="uri">https://en.wikipedia.org/wiki/Crackles</a></li>
+<li>Crackles is a collider that naturally leaves the back-door path
+closed. However, control for crackles would open the back-door path,
+introducing confounding through the path (beta-blocker <span
+class="math inline">\(\leftarrow\)</span> heart failure <span
+class="math inline">\(\leftrightarrow\)</span> pneumonia <span
+class="math inline">\(\rightarrow\)</span> ARDS).</li>
+<li>M-bias: bias induced by adjusting for a variable on a backdoor
+pathway which is a collider on that pathway.</li>
+</ul>
+<p>We can modify the DAG to show that we don’t need to adjust under an M
+structure.</p>
+<pre class="r"><code>g2 &lt;- dagitty(&#39;dag {
+  E &lt;- A -&gt; C &lt;- B -&gt; D
+  E -&gt; D
+  E [exposure, pos=&quot;0,2&quot;]
+  D [outcome, pos=&quot;2,2&quot;]
+  A [pos=&quot;0,0&quot;]
+  B [pos=&quot;2,0&quot;]
+  C [pos=&quot;1,1&quot;]
+}&#39;)
+plot(g2)</code></pre>
+<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-35-1.png" width="50%" /></p>
+<pre class="r"><code>adjustmentSets(g2)</code></pre>
+<pre><code>##  {}</code></pre>
+The adjustment set is the empty set, i.e., don’t adjust for any
+covariates.
+</details>
+<details closed>
+<summary>
+<span title='Click to Expand'>
+<H4>
+Session info
+</H4>
+</span>
+</summary>
+<pre class="r"><code>
+─ Session info ────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.2.0 (2022-04-22)
+ os       macOS Monterey 12.4
+ system   aarch64, darwin20
+ ui       X11
+ language (EN)
+ collate  en_GB.UTF-8
+ ctype    en_GB.UTF-8
+ tz       Europe/London
+ date     2022-06-12
+ pandoc   2.18 @ /opt/homebrew/bin/ (via rmarkdown)
+
+─ Packages ────────────────────────────────────────────────────────────────────────────────
+ package      * version date (UTC) lib source
+ assertthat     0.2.1   2019-03-21 [1] CRAN (R 4.2.0)
+ backports      1.4.1   2021-12-13 [1] CRAN (R 4.2.0)
+ base64enc      0.1-3   2015-07-28 [1] CRAN (R 4.2.0)
+ boot           1.3-28  2021-05-03 [1] CRAN (R 4.2.0)
+ broom          0.8.0   2022-04-13 [1] CRAN (R 4.2.0)
+ bslib          0.3.1   2021-10-06 [1] CRAN (R 4.2.0)
+ cellranger     1.1.0   2016-07-27 [1] CRAN (R 4.2.0)
+ checkmate      2.1.0   2022-04-21 [1] CRAN (R 4.2.0)
+ cli            3.3.0   2022-04-25 [1] CRAN (R 4.2.0)
+ clipr          0.8.0   2022-02-22 [1] CRAN (R 4.2.0)
+ cluster        2.1.3   2022-03-28 [1] CRAN (R 4.2.0)
+ colorspace     2.0-3   2022-02-21 [1] CRAN (R 4.2.0)
+ crayon         1.5.1   2022-03-26 [1] CRAN (R 4.2.0)
+ curl           4.3.2   2021-06-23 [1] CRAN (R 4.2.0)
+ dagitty      * 0.3-1   2021-01-21 [1] CRAN (R 4.2.0)
+ data.table     1.14.2  2021-09-27 [1] CRAN (R 4.2.0)
+ DBI            1.1.2   2021-12-20 [1] CRAN (R 4.2.0)
+ dbplyr         2.2.0   2022-06-05 [1] CRAN (R 4.2.0)
+ desc           1.4.1   2022-03-06 [1] CRAN (R 4.2.0)
+ details        0.3.0   2022-03-27 [1] CRAN (R 4.2.0)
+ DiagrammeR   * 1.0.9   2022-03-05 [1] CRAN (R 4.2.0)
+ digest         0.6.29  2021-12-01 [1] CRAN (R 4.2.0)
+ dplyr        * 1.0.9   2022-04-28 [1] CRAN (R 4.2.0)
+ ellipsis       0.3.2   2021-04-29 [1] CRAN (R 4.2.0)
+ evaluate       0.15    2022-02-18 [1] CRAN (R 4.2.0)
+ fansi          1.0.3   2022-03-24 [1] CRAN (R 4.2.0)
+ farver         2.1.0   2021-02-28 [1] CRAN (R 4.2.0)
+ fastmap        1.1.0   2021-01-25 [1] CRAN (R 4.2.0)
+ forcats      * 0.5.1   2021-01-27 [1] CRAN (R 4.2.0)
+ foreign        0.8-82  2022-01-16 [1] CRAN (R 4.2.0)
+ Formula      * 1.2-4   2020-10-16 [1] CRAN (R 4.2.0)
+ fs             1.5.2   2021-12-08 [1] CRAN (R 4.2.0)
+ generics       0.1.2   2022-01-31 [1] CRAN (R 4.2.0)
+ ggdag        * 0.2.4   2021-10-10 [1] CRAN (R 4.2.0)
+ ggforce        0.3.3   2021-03-05 [1] CRAN (R 4.2.0)
+ ggplot2      * 3.3.6   2022-05-03 [1] CRAN (R 4.2.0)
+ ggraph         2.0.5   2021-02-23 [1] CRAN (R 4.2.0)
+ ggrepel        0.9.1   2021-01-15 [1] CRAN (R 4.2.0)
+ glue           1.6.2   2022-02-24 [1] CRAN (R 4.2.0)
+ graphlayouts   0.8.0   2022-01-03 [1] CRAN (R 4.2.0)
+ gridExtra      2.3     2017-09-09 [1] CRAN (R 4.2.0)
+ gtable         0.3.0   2019-03-25 [1] CRAN (R 4.2.0)
+ haven          2.5.0   2022-04-15 [1] CRAN (R 4.2.0)
+ highr          0.9     2021-04-16 [1] CRAN (R 4.2.0)
+ Hmisc        * 4.7-0   2022-04-19 [1] CRAN (R 4.2.0)
+ hms            1.1.1   2021-09-26 [1] CRAN (R 4.2.0)
+ htmlTable      2.4.0   2022-01-04 [1] CRAN (R 4.2.0)
+ htmltools      0.5.2   2021-08-25 [1] CRAN (R 4.2.0)
+ htmlwidgets    1.5.4   2021-09-08 [1] CRAN (R 4.2.0)
+ httr           1.4.3   2022-05-04 [1] CRAN (R 4.2.0)
+ igraph         1.3.1   2022-04-20 [1] CRAN (R 4.2.0)
+ jpeg           0.1-9   2021-07-24 [1] CRAN (R 4.2.0)
+ jquerylib      0.1.4   2021-04-26 [1] CRAN (R 4.2.0)
+ jsonlite       1.8.0   2022-02-22 [1] CRAN (R 4.2.0)
+ knitr          1.39    2022-04-26 [1] CRAN (R 4.2.0)
+ labeling       0.4.2   2020-10-20 [1] CRAN (R 4.2.0)
+ lattice      * 0.20-45 2021-09-22 [1] CRAN (R 4.2.0)
+ latticeExtra   0.6-29  2019-12-19 [1] CRAN (R 4.2.0)
+ lifecycle      1.0.1   2021-09-24 [1] CRAN (R 4.2.0)
+ lubridate      1.8.0   2021-10-07 [1] CRAN (R 4.2.0)
+ magrittr       2.0.3   2022-03-30 [1] CRAN (R 4.2.0)
+ MASS           7.3-57  2022-04-22 [1] CRAN (R 4.2.0)
+ Matrix         1.4-1   2022-03-23 [1] CRAN (R 4.2.0)
+ modelr         0.1.8   2020-05-19 [1] CRAN (R 4.2.0)
+ munsell        0.5.0   2018-06-12 [1] CRAN (R 4.2.0)
+ nnet           7.3-17  2022-01-16 [1] CRAN (R 4.2.0)
+ pillar         1.7.0   2022-02-01 [1] CRAN (R 4.2.0)
+ pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.2.0)
+ png            0.1-7   2013-12-03 [1] CRAN (R 4.2.0)
+ polyclip       1.10-0  2019-03-14 [1] CRAN (R 4.2.0)
+ purrr        * 0.3.4   2020-04-17 [1] CRAN (R 4.2.0)
+ R6             2.5.1   2021-08-19 [1] CRAN (R 4.2.0)
+ RColorBrewer   1.1-3   2022-04-03 [1] CRAN (R 4.2.0)
+ Rcpp           1.0.8.3 2022-03-17 [1] CRAN (R 4.2.0)
+ readr        * 2.1.2   2022-01-30 [1] CRAN (R 4.2.0)
+ readxl         1.4.0   2022-03-28 [1] CRAN (R 4.2.0)
+ reprex         2.0.1   2021-08-05 [1] CRAN (R 4.2.0)
+ rlang          1.0.2   2022-03-04 [1] CRAN (R 4.2.0)
+ rmarkdown      2.14    2022-04-25 [1] CRAN (R 4.2.0)
+ rpart          4.1.16  2022-01-24 [1] CRAN (R 4.2.0)
+ rprojroot      2.0.3   2022-04-02 [1] CRAN (R 4.2.0)
+ rstudioapi     0.13    2020-11-12 [1] CRAN (R 4.2.0)
+ rvest          1.0.2   2021-10-16 [1] CRAN (R 4.2.0)
+ sass           0.4.1   2022-03-23 [1] CRAN (R 4.2.0)
+ scales         1.2.0   2022-04-13 [1] CRAN (R 4.2.0)
+ sessioninfo    1.2.2   2021-12-06 [1] CRAN (R 4.2.0)
+ stringi        1.7.6   2021-11-29 [1] CRAN (R 4.2.0)
+ stringr      * 1.4.0   2019-02-10 [1] CRAN (R 4.2.0)
+ survival     * 3.3-1   2022-03-03 [1] CRAN (R 4.2.0)
+ tibble       * 3.1.7   2022-05-03 [1] CRAN (R 4.2.0)
+ tidygraph      1.2.1   2022-04-05 [1] CRAN (R 4.2.0)
+ tidyr        * 1.2.0   2022-02-01 [1] CRAN (R 4.2.0)
+ tidyselect     1.1.2   2022-02-21 [1] CRAN (R 4.2.0)
+ tidyverse    * 1.3.1   2021-04-15 [1] CRAN (R 4.2.0)
+ tweenr         1.0.2   2021-03-23 [1] CRAN (R 4.2.0)
+ tzdb           0.3.0   2022-03-28 [1] CRAN (R 4.2.0)
+ utf8           1.2.2   2021-07-24 [1] CRAN (R 4.2.0)
+ V8             4.2.0   2022-05-14 [1] CRAN (R 4.2.0)
+ vctrs          0.4.1   2022-04-13 [1] CRAN (R 4.2.0)
+ viridis        0.6.2   2021-10-13 [1] CRAN (R 4.2.0)
+ viridisLite    0.4.0   2021-04-13 [1] CRAN (R 4.2.0)
+ visNetwork     2.1.0   2021-09-29 [1] CRAN (R 4.2.0)
+ withr          2.5.0   2022-03-03 [1] CRAN (R 4.2.0)
+ xfun           0.31    2022-05-10 [1] CRAN (R 4.2.0)
+ xml2           1.3.3   2021-11-30 [1] CRAN (R 4.2.0)
+ yaml           2.3.5   2022-02-21 [1] CRAN (R 4.2.0)
+
+ [1] /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library
+
+───────────────────────────────────────────────────────────────────────────────────────────
+</code></pre>
+</details>
+<p><br></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
