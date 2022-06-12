@@ -107,11 +107,11 @@ knitr::include_graphics("./img/practical-2b-robins-dags-dag-6.png")
 ### Scenario 2
 
 -	The data come from a prospective cohort study
--	$D$ is all-cause mortality in a cohort of healthy male miners, all aged 25, all of whom worked underground in a variety of different mine shafts for 6 months in 1967
+-	$D$ is all-cause mortality in a cohort of healthy male miners, all aged 25 years, all of whom worked underground in a variety of different mine shafts for 6 months in 1967
 -	40 year follow-up is complete. The aetiologic question is whether pulmonary exposure to doses of radon above a certain level causes increased mortality
 -	For each miner, the air level of radon in his mine was measured ($E^*$)
 -	A subject’s actual exposure depends on the level of radon in the mine and the physical demands of the job and this was measured by lung dosimetry ($E$: 0 = below threshold of interest, 1 = above)
--	It is known that 6 months of physical exertion at age 25 has no independent effect on subsequent mortality
+-	It is known that 6 months of physical exertion at age 25 years has no independent effect on subsequent mortality
 
 ```{asis, include=params$include}
 <details>
