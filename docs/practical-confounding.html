@@ -317,29 +317,40 @@ confounding</h1>
 <ul>
 <li>Pathway</li>
 </ul>
-<div id="htmlwidget-3d0496cc250d2d015afc" style="width:50%;height:75px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3d0496cc250d2d015afc">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b97242da9c4f32357466" style="width:50%;height:75px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b97242da9c4f32357466">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>Mediator:</li>
 </ul>
-<div id="htmlwidget-820e6ddde49298637767" style="width:50%;height:75px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-820e6ddde49298637767">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      M [label=\"Mediator\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X M Y }\n      X -> M [minlen=3, label=\"Indirect\"]\n      M -> Y [minlen=3, label=\"pathway\"]\n      X -> Y [label=\"Direct pathway\"]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-73a0f4899b0650221578" style="width:50%;height:75px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-73a0f4899b0650221578">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      M [label=\"Mediator\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X M Y }\n      X -> M [minlen=3, label=\"Indirect\"]\n      M -> Y [minlen=3, label=\"pathway\"]\n      X -> Y [label=\"Direct pathway\"]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>Backdoor pathway (first arrow goes wrong way from start point, other
 arrows can go in either direction): <span class="math inline">\(X
 \leftarrow L \rightarrow Y\)</span></li>
 </ul>
-<div id="htmlwidget-6b37def73be902da803a" style="width:50%;height:200px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6b37def73be902da803a">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=<<I>L<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-a39d433e44f9a3d9128d" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a39d433e44f9a3d9128d">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=<<I>L<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>Collider</li>
 </ul>
-<div id="htmlwidget-48870cfb849655d0d15b" style="width:50%;height:200px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-48870cfb849655d0d15b">{"x":{"diagram":"\n      digraph collider {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Z [label=\"Collider\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Z\n      Y -> Z\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-669775edabe230b489e9" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-669775edabe230b489e9">{"x":{"diagram":"\n      digraph collider {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Z [label=\"Collider\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Z\n      Y -> Z\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p>A pathway is closed if</p>
 <ul>
-<li>We adjust for a variable that’s not a collider on the pathway</li>
-<li>There’s a collider on the pathway</li>
+<li>We adjust for a variable that’s not a collider on the pathway,
+e.g. in the DAG below adjusting for <span
+class="math inline">\(L\)</span>, indicated with the box, closes the
+path <span class="math inline">\(X \leftarrow L \rightarrow
+Y\)</span></li>
+</ul>
+<div id="htmlwidget-fa23e70ee1f796fe9dad" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fa23e70ee1f796fe9dad">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      node [shape=box, height=0.3, width=0.3]\n      L [label=<<I>L<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<ul>
+<li>There’s a collider on the pathway, i.e., in the collider DAG the
+path <span class="math inline">\(X \rightarrow \text{Collider}
+\leftarrow Y\)</span> is closed (without adjusting for the
+collider)</li>
 </ul>
 </div>
 <div id="question-1" class="section level2">
@@ -350,8 +361,8 @@ Hernán.</p>
 <h3>a)</h3>
 <p>What is the triangle definition of a confounder? Hint: it has three
 criteria.</p>
-<div id="htmlwidget-76bd6edeb8d38c9971c0" style="width:50%;height:200px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-76bd6edeb8d38c9971c0">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=\"Confounder\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e5cfaf01b25fcb4d3517" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e5cfaf01b25fcb4d3517">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=\"Confounder\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p>A confounder is</p>
 <ol style="list-style-type: decimal">
 <li></li>
