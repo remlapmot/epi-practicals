@@ -81,7 +81,7 @@ DiagrammeR::grViz("
 
 A pathway is closed if
 
-- We adjust for a variable that's not a collider on the pathway, e.g. adjusting for $L$ indicated with the box closes the path $X \leftarrow L \rightarrow Y$
+- We adjust for a variable that's not a collider on the pathway, e.g. in the DAG below adjusting for $L$, indicated with the box, closes the path $X \leftarrow L \rightarrow Y$
 
 ```{r, echo=FALSE}
 DiagrammeR::grViz("
