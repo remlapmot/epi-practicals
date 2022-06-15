@@ -99,6 +99,23 @@ DiagrammeR::grViz("
       ", height = 200)
 ```
 
+Or in this mediator DAG, adjusting for the mediator closes the path $X \rightarrow M \rightarrow Y$
+```{r, echo=FALSE}
+DiagrammeR::grViz("
+      digraph confounder {
+      graph [rankdir=TB]
+      node [shape=plaintext, height=0.3, width=0.3]
+      X [label=<<I>X</I>>]
+      Y [label=<<I>Y</I>>]
+      node [shape=box, height=0.3, width=0.3]
+      M [label=<<I>M</I>>]
+      { rank = same; X M Y }
+      X -> M [minlen=2]
+      M -> Y [minlen=2]
+      }
+      ", height = 75)
+```  
+
 - There's a collider on the pathway, i.e., in the collider DAG the path $X \rightarrow \text{Collider} \leftarrow Y$ is closed (without adjusting for the collider)  
 
 ## Question 1
