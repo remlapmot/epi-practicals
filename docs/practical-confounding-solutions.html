@@ -317,25 +317,25 @@ confounding</h1>
 <ul>
 <li>Pathway</li>
 </ul>
-<div id="htmlwidget-9e708927660fa651ba09" style="width:50%;height:75px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9e708927660fa651ba09">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-60b7e488ab2b99de2ab2" style="width:50%;height:75px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-60b7e488ab2b99de2ab2">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>Mediator:</li>
 </ul>
-<div id="htmlwidget-0a4e4b820ca2860bd834" style="width:50%;height:75px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0a4e4b820ca2860bd834">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      M [label=\"Mediator\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X M Y }\n      X -> M [minlen=3, label=\"Indirect\"]\n      M -> Y [minlen=3, label=\"pathway\"]\n      X -> Y [label=\"Direct pathway\"]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-34383ca5b532d214ca1f" style="width:50%;height:75px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-34383ca5b532d214ca1f">{"x":{"diagram":"\n      digraph mediator {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      M [label=\"Mediator\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X M Y }\n      X -> M [minlen=3, label=\"Indirect\"]\n      M -> Y [minlen=3, label=\"pathway\"]\n      X -> Y [label=\"Direct pathway\"]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>Backdoor pathway (first arrow goes wrong way from start point, other
 arrows can go in either direction): <span class="math inline">\(X
 \leftarrow L \rightarrow Y\)</span></li>
 </ul>
-<div id="htmlwidget-872fdbc114e3b3dee5b4" style="width:50%;height:200px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-872fdbc114e3b3dee5b4">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=<<I>L<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-28cf6dfd393f6364ef6d" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-28cf6dfd393f6364ef6d">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=<<I>L<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>Collider</li>
 </ul>
-<div id="htmlwidget-9cf71dc8eec2bc0a4871" style="width:50%;height:200px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9cf71dc8eec2bc0a4871">{"x":{"diagram":"\n      digraph collider {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Z [label=\"Collider\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Z\n      Y -> Z\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d9a093ff1de01c43460f" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d9a093ff1de01c43460f">{"x":{"diagram":"\n      digraph collider {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Z [label=\"Collider\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      X -> Z\n      Y -> Z\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p>A pathway is closed if</p>
 <ul>
 <li>We adjust for a variable that’s not a collider on the pathway,
@@ -344,8 +344,12 @@ class="math inline">\(L\)</span>, indicated with the box, closes the
 path <span class="math inline">\(X \leftarrow L \rightarrow
 Y\)</span></li>
 </ul>
-<div id="htmlwidget-bd8b256a03a97c33c873" style="width:50%;height:200px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-bd8b256a03a97c33c873">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      node [shape=box, height=0.3, width=0.3]\n      L [label=<<I>L<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6d7b6e584785128ead64" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6d7b6e584785128ead64">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      node [shape=box, height=0.3, width=0.3]\n      L [label=<<I>L<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p>Or in this mediator DAG, adjusting for the mediator closes the path
+<span class="math inline">\(X \rightarrow M \rightarrow Y\)</span></p>
+<div id="htmlwidget-e3769010854bee7986ca" style="width:50%;height:75px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e3769010854bee7986ca">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      Y [label=<<I>Y<\/I>>]\n      node [shape=box, height=0.3, width=0.3]\n      M [label=<<I>M<\/I>>]\n      { rank = same; X M Y }\n      X -> M [minlen=2]\n      M -> Y [minlen=2]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <ul>
 <li>There’s a collider on the pathway, i.e., in the collider DAG the
 path <span class="math inline">\(X \rightarrow \text{Collider}
@@ -361,8 +365,8 @@ Hernán.</p>
 <h3>a)</h3>
 <p>What is the triangle definition of a confounder? Hint: it has three
 criteria.</p>
-<div id="htmlwidget-0f9c79f8d9c547efa813" style="width:50%;height:200px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0f9c79f8d9c547efa813">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=\"Confounder\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d0e29c837e2125b6e641" style="width:50%;height:200px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d0e29c837e2125b6e641">{"x":{"diagram":"\n      digraph confounder {\n      graph [rankdir=TB]\n      node [shape=plaintext, height=0.3, width=0.3]\n      X [label=<<I>X<\/I>>]\n      L [label=\"Confounder\"]\n      Y [label=<<I>Y<\/I>>]\n      { rank = same; X Y }\n      L -> X\n      L -> Y\n      X -> Y [minlen=3]\n      }\n      ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p>A confounder is</p>
 <ol style="list-style-type: decimal">
 <li></li>
@@ -649,14 +653,14 @@ g &lt;- dagitty(&#39;dag {
   C [pos=&quot;1,1&quot;]
 }&#39;)
 plot(g)</code></pre>
-<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-26-1.png" width="50%" /></p>
+<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-27-1.png" width="50%" /></p>
 <pre class="r"><code>library(ggdag)
 theme_set(theme_dag())
 
 butterfly_bias(x = &quot;E&quot;, y = &quot;D&quot;, a = &quot;A&quot;, m = &quot;C&quot;, b = &quot;B&quot;,
                x_y_associated = TRUE) %&gt;%
   ggdag(use_labels = &quot;label&quot;, text = FALSE)</code></pre>
-<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-27-1.png" width="50%" /></p>
+<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-28-1.png" width="50%" /></p>
 <pre class="r"><code>paths(g, &quot;E&quot;, &quot;D&quot;)</code></pre>
 <pre><code>## $paths
 ## [1] &quot;E -&gt; D&quot;                &quot;E &lt;- A -&gt; C -&gt; D&quot;      &quot;E &lt;- A -&gt; C &lt;- B -&gt; D&quot;
@@ -725,7 +729,7 @@ structure.</p>
   C [pos=&quot;1,1&quot;]
 }&#39;)
 plot(g2)</code></pre>
-<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-36-1.png" width="50%" /></p>
+<p><img src="practical-confounding-solutions_files/figure-html/unnamed-chunk-37-1.png" width="50%" /></p>
 <pre class="r"><code>adjustmentSets(g2)</code></pre>
 <pre><code>##  {}</code></pre>
 The adjustment set is the empty set, i.e., don’t adjust for any
@@ -740,7 +744,7 @@ Session info
 </span>
 </summary>
 <pre class="r"><code>
-─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.2.0 (2022-04-22)
  os       macOS Monterey 12.4
@@ -750,121 +754,123 @@ Session info
  collate  en_GB.UTF-8
  ctype    en_GB.UTF-8
  tz       Europe/London
- date     2022-06-13
+ date     2022-06-15
  pandoc   2.18 @ /opt/homebrew/bin/ (via rmarkdown)
 
-─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─ Packages ───────────────────────────────────────────────────────────────────
  package      * version date (UTC) lib source
- assertthat     0.2.1   2019-03-21 [1] CRAN (R 4.2.0)
- backports      1.4.1   2021-12-13 [1] CRAN (R 4.2.0)
- base64enc      0.1-3   2015-07-28 [1] CRAN (R 4.2.0)
- boot           1.3-28  2021-05-03 [1] CRAN (R 4.2.0)
- broom          0.8.0   2022-04-13 [1] CRAN (R 4.2.0)
- bslib          0.3.1   2021-10-06 [1] CRAN (R 4.2.0)
- cellranger     1.1.0   2016-07-27 [1] CRAN (R 4.2.0)
- checkmate      2.1.0   2022-04-21 [1] CRAN (R 4.2.0)
- cli            3.3.0   2022-04-25 [1] CRAN (R 4.2.0)
- clipr          0.8.0   2022-02-22 [1] CRAN (R 4.2.0)
- cluster        2.1.3   2022-03-28 [1] CRAN (R 4.2.0)
- colorspace     2.0-3   2022-02-21 [1] CRAN (R 4.2.0)
- crayon         1.5.1   2022-03-26 [1] CRAN (R 4.2.0)
- curl           4.3.2   2021-06-23 [1] CRAN (R 4.2.0)
+ assertthat     0.2.1   2019-03-21 [3] CRAN (R 4.2.0)
+ backports      1.4.1   2021-12-13 [3] CRAN (R 4.2.0)
+ base64enc      0.1-3   2015-07-28 [3] CRAN (R 4.2.0)
+ boot           1.3-28  2021-05-03 [3] CRAN (R 4.2.0)
+ broom          0.8.0   2022-04-13 [3] CRAN (R 4.2.0)
+ bslib          0.3.1   2021-10-06 [3] CRAN (R 4.2.0)
+ cellranger     1.1.0   2016-07-27 [3] CRAN (R 4.2.0)
+ checkmate      2.1.0   2022-04-21 [3] CRAN (R 4.2.0)
+ cli            3.3.0   2022-04-25 [3] CRAN (R 4.2.0)
+ clipr          0.8.0   2022-02-22 [3] CRAN (R 4.2.0)
+ cluster        2.1.3   2022-03-28 [3] CRAN (R 4.2.0)
+ colorspace     2.0-3   2022-02-21 [3] CRAN (R 4.2.0)
+ crayon         1.5.1   2022-03-26 [3] CRAN (R 4.2.0)
+ curl           4.3.2   2021-06-23 [3] CRAN (R 4.2.0)
  dagitty      * 0.3-1   2021-01-21 [1] CRAN (R 4.2.0)
- data.table     1.14.2  2021-09-27 [1] CRAN (R 4.2.0)
- DBI            1.1.2   2021-12-20 [1] CRAN (R 4.2.0)
- dbplyr         2.2.0   2022-06-05 [1] CRAN (R 4.2.0)
- desc           1.4.1   2022-03-06 [1] CRAN (R 4.2.0)
+ data.table     1.14.2  2021-09-27 [3] CRAN (R 4.2.0)
+ DBI            1.1.2   2021-12-20 [3] CRAN (R 4.2.0)
+ dbplyr         2.2.0   2022-06-05 [3] CRAN (R 4.2.0)
+ desc           1.4.1   2022-03-06 [3] CRAN (R 4.2.0)
  details        0.3.0   2022-03-27 [1] CRAN (R 4.2.0)
  DiagrammeR   * 1.0.9   2022-03-05 [1] CRAN (R 4.2.0)
- digest         0.6.29  2021-12-01 [1] CRAN (R 4.2.0)
+ digest         0.6.29  2021-12-01 [3] CRAN (R 4.2.0)
  dplyr        * 1.0.9   2022-04-28 [1] CRAN (R 4.2.0)
- ellipsis       0.3.2   2021-04-29 [1] CRAN (R 4.2.0)
- evaluate       0.15    2022-02-18 [1] CRAN (R 4.2.0)
- fansi          1.0.3   2022-03-24 [1] CRAN (R 4.2.0)
- farver         2.1.0   2021-02-28 [1] CRAN (R 4.2.0)
- fastmap        1.1.0   2021-01-25 [1] CRAN (R 4.2.0)
- forcats      * 0.5.1   2021-01-27 [1] CRAN (R 4.2.0)
- foreign        0.8-82  2022-01-16 [1] CRAN (R 4.2.0)
+ ellipsis       0.3.2   2021-04-29 [3] CRAN (R 4.2.0)
+ evaluate       0.15    2022-02-18 [3] CRAN (R 4.2.0)
+ fansi          1.0.3   2022-03-24 [3] CRAN (R 4.2.0)
+ farver         2.1.0   2021-02-28 [3] CRAN (R 4.2.0)
+ fastmap        1.1.0   2021-01-25 [3] CRAN (R 4.2.0)
+ forcats      * 0.5.1   2021-01-27 [3] CRAN (R 4.2.0)
+ foreign        0.8-82  2022-01-16 [3] CRAN (R 4.2.0)
  Formula      * 1.2-4   2020-10-16 [1] CRAN (R 4.2.0)
- fs             1.5.2   2021-12-08 [1] CRAN (R 4.2.0)
- generics       0.1.2   2022-01-31 [1] CRAN (R 4.2.0)
+ fs             1.5.2   2021-12-08 [3] CRAN (R 4.2.0)
+ generics       0.1.2   2022-01-31 [3] CRAN (R 4.2.0)
  ggdag        * 0.2.4   2021-10-10 [1] CRAN (R 4.2.0)
  ggforce        0.3.3   2021-03-05 [1] CRAN (R 4.2.0)
  ggplot2      * 3.3.6   2022-05-03 [1] CRAN (R 4.2.0)
  ggraph         2.0.5   2021-02-23 [1] CRAN (R 4.2.0)
  ggrepel        0.9.1   2021-01-15 [1] CRAN (R 4.2.0)
- glue           1.6.2   2022-02-24 [1] CRAN (R 4.2.0)
+ glue           1.6.2   2022-02-24 [3] CRAN (R 4.2.0)
  graphlayouts   0.8.0   2022-01-03 [1] CRAN (R 4.2.0)
- gridExtra      2.3     2017-09-09 [1] CRAN (R 4.2.0)
- gtable         0.3.0   2019-03-25 [1] CRAN (R 4.2.0)
+ gridExtra      2.3     2017-09-09 [3] CRAN (R 4.2.0)
+ gtable         0.3.0   2019-03-25 [3] CRAN (R 4.2.0)
  haven          2.5.0   2022-04-15 [1] CRAN (R 4.2.0)
- highr          0.9     2021-04-16 [1] CRAN (R 4.2.0)
+ highr          0.9     2021-04-16 [3] CRAN (R 4.2.0)
  Hmisc        * 4.7-0   2022-04-19 [1] CRAN (R 4.2.0)
- hms            1.1.1   2021-09-26 [1] CRAN (R 4.2.0)
+ hms            1.1.1   2021-09-26 [3] CRAN (R 4.2.0)
  htmlTable      2.4.0   2022-01-04 [1] CRAN (R 4.2.0)
- htmltools      0.5.2   2021-08-25 [1] CRAN (R 4.2.0)
- htmlwidgets    1.5.4   2021-09-08 [1] CRAN (R 4.2.0)
- httr           1.4.3   2022-05-04 [1] CRAN (R 4.2.0)
+ htmltools      0.5.2   2021-08-25 [3] CRAN (R 4.2.0)
+ htmlwidgets    1.5.4   2021-09-08 [3] CRAN (R 4.2.0)
+ httr           1.4.3   2022-05-04 [3] CRAN (R 4.2.0)
  igraph         1.3.1   2022-04-20 [1] CRAN (R 4.2.0)
  jpeg           0.1-9   2021-07-24 [1] CRAN (R 4.2.0)
- jquerylib      0.1.4   2021-04-26 [1] CRAN (R 4.2.0)
- jsonlite       1.8.0   2022-02-22 [1] CRAN (R 4.2.0)
- knitr          1.39    2022-04-26 [1] CRAN (R 4.2.0)
- labeling       0.4.2   2020-10-20 [1] CRAN (R 4.2.0)
- lattice      * 0.20-45 2021-09-22 [1] CRAN (R 4.2.0)
+ jquerylib      0.1.4   2021-04-26 [3] CRAN (R 4.2.0)
+ jsonlite       1.8.0   2022-02-22 [3] CRAN (R 4.2.0)
+ knitr          1.39    2022-04-26 [3] CRAN (R 4.2.0)
+ labeling       0.4.2   2020-10-20 [3] CRAN (R 4.2.0)
+ lattice      * 0.20-45 2021-09-22 [3] CRAN (R 4.2.0)
  latticeExtra   0.6-29  2019-12-19 [1] CRAN (R 4.2.0)
- lifecycle      1.0.1   2021-09-24 [1] CRAN (R 4.2.0)
- lubridate      1.8.0   2021-10-07 [1] CRAN (R 4.2.0)
- magrittr       2.0.3   2022-03-30 [1] CRAN (R 4.2.0)
- MASS           7.3-57  2022-04-22 [1] CRAN (R 4.2.0)
- Matrix         1.4-1   2022-03-23 [1] CRAN (R 4.2.0)
- modelr         0.1.8   2020-05-19 [1] CRAN (R 4.2.0)
- munsell        0.5.0   2018-06-12 [1] CRAN (R 4.2.0)
- nnet           7.3-17  2022-01-16 [1] CRAN (R 4.2.0)
- pillar         1.7.0   2022-02-01 [1] CRAN (R 4.2.0)
- pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.2.0)
+ lifecycle      1.0.1   2021-09-24 [3] CRAN (R 4.2.0)
+ lubridate      1.8.0   2021-10-07 [3] CRAN (R 4.2.0)
+ magrittr       2.0.3   2022-03-30 [3] CRAN (R 4.2.0)
+ MASS           7.3-57  2022-04-22 [3] CRAN (R 4.2.0)
+ Matrix         1.4-1   2022-03-23 [3] CRAN (R 4.2.0)
+ modelr         0.1.8   2020-05-19 [3] CRAN (R 4.2.0)
+ munsell        0.5.0   2018-06-12 [3] CRAN (R 4.2.0)
+ nnet           7.3-17  2022-01-16 [3] CRAN (R 4.2.0)
+ pillar         1.7.0   2022-02-01 [3] CRAN (R 4.2.0)
+ pkgconfig      2.0.3   2019-09-22 [3] CRAN (R 4.2.0)
  png            0.1-7   2013-12-03 [1] CRAN (R 4.2.0)
  polyclip       1.10-0  2019-03-14 [1] CRAN (R 4.2.0)
- purrr        * 0.3.4   2020-04-17 [1] CRAN (R 4.2.0)
- R6             2.5.1   2021-08-19 [1] CRAN (R 4.2.0)
- RColorBrewer   1.1-3   2022-04-03 [1] CRAN (R 4.2.0)
- Rcpp           1.0.8.3 2022-03-17 [1] CRAN (R 4.2.0)
- readr        * 2.1.2   2022-01-30 [1] CRAN (R 4.2.0)
- readxl         1.4.0   2022-03-28 [1] CRAN (R 4.2.0)
- reprex         2.0.1   2021-08-05 [1] CRAN (R 4.2.0)
- rlang          1.0.2   2022-03-04 [1] CRAN (R 4.2.0)
- rmarkdown      2.14    2022-04-25 [1] CRAN (R 4.2.0)
- rpart          4.1.16  2022-01-24 [1] CRAN (R 4.2.0)
- rprojroot      2.0.3   2022-04-02 [1] CRAN (R 4.2.0)
- rstudioapi     0.13    2020-11-12 [1] CRAN (R 4.2.0)
- rvest          1.0.2   2021-10-16 [1] CRAN (R 4.2.0)
- sass           0.4.1   2022-03-23 [1] CRAN (R 4.2.0)
- scales         1.2.0   2022-04-13 [1] CRAN (R 4.2.0)
- sessioninfo    1.2.2   2021-12-06 [1] CRAN (R 4.2.0)
- stringi        1.7.6   2021-11-29 [1] CRAN (R 4.2.0)
- stringr      * 1.4.0   2019-02-10 [1] CRAN (R 4.2.0)
- survival     * 3.3-1   2022-03-03 [1] CRAN (R 4.2.0)
+ purrr        * 0.3.4   2020-04-17 [3] CRAN (R 4.2.0)
+ R6             2.5.1   2021-08-19 [3] CRAN (R 4.2.0)
+ RColorBrewer   1.1-3   2022-04-03 [3] CRAN (R 4.2.0)
+ Rcpp           1.0.8.3 2022-03-17 [3] CRAN (R 4.2.0)
+ readr        * 2.1.2   2022-01-30 [3] CRAN (R 4.2.0)
+ readxl         1.4.0   2022-03-28 [3] CRAN (R 4.2.0)
+ reprex         2.0.1   2021-08-05 [3] CRAN (R 4.2.0)
+ rlang          1.0.2   2022-03-04 [3] CRAN (R 4.2.0)
+ rmarkdown      2.14    2022-04-25 [3] CRAN (R 4.2.0)
+ rpart          4.1.16  2022-01-24 [3] CRAN (R 4.2.0)
+ rprojroot      2.0.3   2022-04-02 [3] CRAN (R 4.2.0)
+ rstudioapi     0.13    2020-11-12 [3] CRAN (R 4.2.0)
+ rvest          1.0.2   2021-10-16 [3] CRAN (R 4.2.0)
+ sass           0.4.1   2022-03-23 [3] CRAN (R 4.2.0)
+ scales         1.2.0   2022-04-13 [3] CRAN (R 4.2.0)
+ sessioninfo    1.2.2   2021-12-06 [3] CRAN (R 4.2.0)
+ stringi        1.7.6   2021-11-29 [3] CRAN (R 4.2.0)
+ stringr      * 1.4.0   2019-02-10 [3] CRAN (R 4.2.0)
+ survival     * 3.3-1   2022-03-03 [3] CRAN (R 4.2.0)
  tibble       * 3.1.7   2022-05-03 [1] CRAN (R 4.2.0)
  tidygraph      1.2.1   2022-04-05 [1] CRAN (R 4.2.0)
- tidyr        * 1.2.0   2022-02-01 [1] CRAN (R 4.2.0)
- tidyselect     1.1.2   2022-02-21 [1] CRAN (R 4.2.0)
- tidyverse    * 1.3.1   2021-04-15 [1] CRAN (R 4.2.0)
+ tidyr        * 1.2.0   2022-02-01 [3] CRAN (R 4.2.0)
+ tidyselect     1.1.2   2022-02-21 [3] CRAN (R 4.2.0)
+ tidyverse    * 1.3.1   2021-04-15 [3] CRAN (R 4.2.0)
  tweenr         1.0.2   2021-03-23 [1] CRAN (R 4.2.0)
- tzdb           0.3.0   2022-03-28 [1] CRAN (R 4.2.0)
- utf8           1.2.2   2021-07-24 [1] CRAN (R 4.2.0)
+ tzdb           0.3.0   2022-03-28 [3] CRAN (R 4.2.0)
+ utf8           1.2.2   2021-07-24 [3] CRAN (R 4.2.0)
  V8             4.2.0   2022-05-14 [1] CRAN (R 4.2.0)
- vctrs          0.4.1   2022-04-13 [1] CRAN (R 4.2.0)
+ vctrs          0.4.1   2022-04-13 [3] CRAN (R 4.2.0)
  viridis        0.6.2   2021-10-13 [1] CRAN (R 4.2.0)
- viridisLite    0.4.0   2021-04-13 [1] CRAN (R 4.2.0)
+ viridisLite    0.4.0   2021-04-13 [3] CRAN (R 4.2.0)
  visNetwork     2.1.0   2021-09-29 [1] CRAN (R 4.2.0)
- withr          2.5.0   2022-03-03 [1] CRAN (R 4.2.0)
- xfun           0.31    2022-05-10 [1] CRAN (R 4.2.0)
- xml2           1.3.3   2021-11-30 [1] CRAN (R 4.2.0)
- yaml           2.3.5   2022-02-21 [1] CRAN (R 4.2.0)
+ withr          2.5.0   2022-03-03 [3] CRAN (R 4.2.0)
+ xfun           0.31    2022-05-10 [3] CRAN (R 4.2.0)
+ xml2           1.3.3   2021-11-30 [3] CRAN (R 4.2.0)
+ yaml           2.3.5   2022-02-21 [3] CRAN (R 4.2.0)
 
- [1] /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library
+ [1] /Users/tom/Library/R/arm64/4.2/library
+ [2] /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/site-library
+ [3] /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library
 
-──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────
 </code></pre>
 </details>
 <p><br></p>
